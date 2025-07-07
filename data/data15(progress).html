@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>DNA 自转逐步绘制进度条</title>
+    <style>
+        body {
+            margin: 0;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        canvas {
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+<canvas id="dnaCanvas" width="500" height="500"></canvas>
+<script>
+    const canvas = document.getElementById('dnaCanvas');
+    const ctx = canvas.getContext('2d');
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+
+    let progress = 0;
+    let dnaRotation = 0;
+
+    function drawDNA(progress, dnaRotation) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(dnaRotation);
+
+        const helixRadius = 60;
+        const helixHeight = 300;
+        const steps = 100;
+        const visibleSteps = Math.floor(steps * progress / 100);
+
+        for (let i = 0; i < visibleSteps; i++) {
+            const t = i / steps;
+            const angle = t * 10 * Math.PI;
+            const y = helixHeight * (t - 0.5);
+            const x = helixRadius * Math.cos(angle);
+            const z = helixRadius * Math.sin(angle);
+
+            const scale = 0.3 + 0.7 * (z + helixRadius) / (2 * helixRadius);
+            ctx.fillStyle = `rgba(0,150,255,${scale})`;
+
+            ctx.beginPath();
+            ctx.ellipse(x, y * 0.7, 4 * scale, 4 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        ctx.restore();
+
+        // 数字进度
+        ctx.fillStyle = "#333";
+        ctx.font = "bold 32px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(`${Math.min(100, Math.floor(progress))}%`, cx, 50);
+    }
+
+    function animate() {
+        drawDNA(progress, dnaRotation);
+        if (progress < 100) {
+            progress += 0.5;  // 控制增长速度
+        }
+        dnaRotation += 0.03; // 控制自转速度
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+</script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8"/>
+    <title>节点文字动态放大进度条</title>
+    <style>
+        body {
+            background: #f0f2f5;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .progress-container {
+            width: 600px;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            height: 30px;
+            width: 0;
+            background: linear-gradient(90deg, #00c3ff, #ff00ff);
+            border-radius: 10px 0 0 10px;
+            transition: width 0.5s ease-out;
+        }
+
+        .node {
+            position: absolute;
+            top: -30px;
+            font-size: 12px;
+            color: #333;
+            white-space: nowrap;
+            transform: translateX(-50%) scale(1);
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .node::before {
+            content: "";
+            display: block;
+            width: 8px;
+            height: 8px;
+            background: #333;
+            border-radius: 50%;
+            margin: 0 auto 4px;
+        }
+
+        .node.completed::before {
+            background: #00c3ff;
+        }
+
+        .progress-text {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <div class="progress-container" id="progressContainer">
+        <div class="progress-bar" id="progressBar"></div>
+        <div class="node" style="left: 10%;" id="node1">10% 数据准备</div>
+        <div class="node" style="left: 40%;" id="node2">40% 数据分析</div>
+        <div class="node" style="left: 70%;" id="node3">70% 生成报告</div>
+        <div class="node" style="left: 100%;" id="node4">100% 完成</div>
+    </div>
+    <div class="progress-text" id="progressText">当前进度：0%</div>
+</div>
+
+<script>
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+
+    const nodes = [
+        {el: document.getElementById('node1'), threshold: 10},
+        {el: document.getElementById('node2'), threshold: 40},
+        {el: document.getElementById('node3'), threshold: 70},
+        {el: document.getElementById('node4'), threshold: 100}
+    ];
+
+    let progress = 0;
+    let currentNodeIndex = 0;
+
+    function updateProgress() {
+        if (currentNodeIndex < nodes.length && progress >= nodes[currentNodeIndex].threshold) {
+            const node = nodes[currentNodeIndex];
+            node.el.classList.add('completed');
+            progressText.innerText = `当前进度：${node.threshold}% ${node.el.textContent}`;
+
+            // 动态放大
+            node.el.style.transform = 'translateX(-50%) scale(1.5)';
+            node.el.style.color = '#00c3ff';
+
+            setTimeout(() => {
+                node.el.style.transform = 'translateX(-50%) scale(1)';
+                setTimeout(() => {
+                    currentNodeIndex++;
+                    continueProgress();
+                }, 300);
+            }, 800);
+        } else {
+            continueProgress();
+        }
+    }
+
+    function continueProgress() {
+        if (progress < 100) {
+            progress += 1;
+            progressBar.style.width = progress + '%';
+            progressText.innerText = `当前进度：${progress}%`;
+            setTimeout(updateProgress, 100);
+        } else {
+            progressText.innerText = '🎉 已完成全部进度！';
+        }
+    }
+
+    continueProgress();
+</script>
+
+</body>
+</html>

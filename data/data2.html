@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8"/>
+    <title>纯原生小图表展示</title>
+    <style>
+        body {
+            background: #f0f0f0;
+            font-family: sans-serif;
+            padding: 40px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .chart-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chart-container">
+    <canvas id="barChart" width="200" height="150"></canvas>
+    <p style="text-align:center">柱状图</p>
+</div>
+
+<div class="chart-container">
+    <canvas id="lineChart" width="200" height="150"></canvas>
+    <p style="text-align:center">折线图</p>
+</div>
+
+<div class="chart-container">
+    <canvas id="pieChart" width="200" height="150"></canvas>
+    <p style="text-align:center">饼图</p>
+</div>
+
+<script>
+    // 柱状图
+    (function () {
+        const ctx = document.getElementById('barChart').getContext('2d');
+        const data = [40, 80, 60, 100];
+        data.forEach((val, i) => {
+            ctx.fillStyle = ['#4facfe', '#43e97b', '#fa709a', '#fbd786'][i];
+            ctx.fillRect(i * 45 + 10, 150 - val, 30, val);
+        });
+    })();
+
+    // 折线图
+    (function () {
+        const ctx = document.getElementById('lineChart').getContext('2d');
+        const data = [30, 60, 40, 90, 70];
+        ctx.beginPath();
+        ctx.strokeStyle = '#4facfe';
+        ctx.lineWidth = 2;
+        ctx.moveTo(0, 150 - data[0]);
+        data.forEach((val, i) => {
+            ctx.lineTo(i * 50, 150 - val);
+        });
+        ctx.stroke();
+
+        // 圆点
+        data.forEach((val, i) => {
+            ctx.beginPath();
+            ctx.fillStyle = '#4facfe';
+            ctx.arc(i * 50, 150 - val, 3, 0, 2 * Math.PI);
+            ctx.fill();
+        });
+    })();
+
+    // 饼图
+    (function () {
+        const ctx = document.getElementById('pieChart').getContext('2d');
+        const data = [30, 50, 40, 80];
+        const colors = ['#4facfe', '#43e97b', '#fa709a', '#fbd786'];
+        const total = data.reduce((a, b) => a + b, 0);
+        let start = 0;
+        data.forEach((val, i) => {
+            const slice = (val / total) * 2 * Math.PI;
+            ctx.beginPath();
+            ctx.moveTo(100, 75);
+            ctx.fillStyle = colors[i];
+            ctx.arc(100, 75, 60, start, start + slice);
+            ctx.fill();
+            start += slice;
+        });
+    })();
+</script>
+
+</body>
+</html>

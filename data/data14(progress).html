@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8"/>
+    <title>3D 倾斜 DNA 螺旋进度条</title>
+    <style>
+        body {
+            margin: 0;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        canvas {
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+<canvas id="dnaCanvas" width="600" height="400"></canvas>
+
+<script>
+    const canvas = document.getElementById('dnaCanvas');
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    let progress = 0;
+
+    function drawTiltedDNA(progress) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const turns = 6;
+        const points = 300;
+
+        for (let i = 0; i < points; i++) {
+            const t = i / points;
+            const angle = t * turns * Math.PI * 2;
+            const y = t * canvas.height * 0.8 - canvas.height * 0.4;
+
+            // 模拟 3D 旋转的 x、z
+            const radius = 120;
+            const x = radius * Math.cos(angle);
+            const z = radius * Math.sin(angle);
+
+            // 透视缩放
+            const scale = 0.5 + 0.5 * (z / radius + 1) / 2;
+            const alpha = 0.2 + 0.8 * scale;
+
+            // 倾斜投影矩阵效果
+            const tiltedX = centerX + x * 0.7 + y * 0.3;
+            const tiltedY = centerY + y * 0.7 - x * 0.2;
+
+            // 画圆点
+            ctx.fillStyle = `rgba(0, 150, 255, ${alpha})`;
+            ctx.beginPath();
+            ctx.arc(tiltedX, tiltedY, 4 * scale, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // 连线
+        ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < points - 10; i += 10) {
+            const t1 = i / points;
+            const t2 = (i + 10) / points;
+            const angle1 = t1 * turns * Math.PI * 2;
+            const angle2 = t2 * turns * Math.PI * 2;
+            const y1 = t1 * canvas.height * 0.8 - canvas.height * 0.4;
+            const y2 = t2 * canvas.height * 0.8 - canvas.height * 0.4;
+            const x1 = radius * Math.cos(angle1);
+            const z1 = radius * Math.sin(angle1);
+            const x2 = radius * Math.cos(angle2);
+            const z2 = radius * Math.sin(angle2);
+            const tx1 = centerX + x1 * 0.7 + y1 * 0.3;
+            const ty1 = centerY + y1 * 0.7 - x1 * 0.2;
+            const tx2 = centerX + x2 * 0.7 + y2 * 0.3;
+            const ty2 = centerY + y2 * 0.7 - x2 * 0.2;
+
+            ctx.beginPath();
+            ctx.moveTo(tx1, ty1);
+            ctx.lineTo(tx2, ty2);
+            ctx.stroke();
+        }
+
+        // 进度文字
+        ctx.fillStyle = '#333';
+        ctx.font = 'bold 32px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${progress}%`, centerX, 50);
+    }
+
+    function animate() {
+        if (progress <= 100) {
+            drawTiltedDNA(progress);
+            progress++;
+            setTimeout(animate, 60);
+        }
+    }
+
+    animate();
+</script>
+
+</body>
+</html>

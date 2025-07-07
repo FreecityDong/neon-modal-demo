@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8"/>
+    <title>炫彩发光数字自增</title>
+    <style>
+        body {
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
+        }
+
+        .counter {
+            font-size: 72px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #00f0ff, #ff00ff, #00f0ff);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            animation: glow 3s linear infinite, flow 4s linear infinite;
+            text-shadow: 0 0 20px #00f0ff, 0 0 30px #ff00ff;
+        }
+
+        @keyframes glow {
+            0% {
+                text-shadow: 0 0 20px #00f0ff, 0 0 30px #ff00ff;
+            }
+            50% {
+                text-shadow: 0 0 30px #ff00ff, 0 0 40px #00f0ff;
+            }
+            100% {
+                text-shadow: 0 0 20px #00f0ff, 0 0 30px #ff00ff;
+            }
+        }
+
+        @keyframes flow {
+            to {
+                background-position: 200% center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="counter" data-target="54321">0</div>
+
+<script>
+    function animateCounterGlow(el) {
+        const target = +el.getAttribute('data-target');
+        let current = 0;
+        const increment = target / 180;
+
+        function update() {
+            current += increment;
+            if (current < target) {
+                el.innerText = Math.floor(current);
+                requestAnimationFrame(update);
+            } else {
+                el.innerText = target;
+            }
+        }
+
+        update();
+    }
+
+    document.querySelectorAll('.counter').forEach(animateCounterGlow);
+</script>
+
+</body>
+</html>

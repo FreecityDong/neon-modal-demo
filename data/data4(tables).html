@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>高端折线图</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #f0f2f5;
+        }
+
+        canvas {
+            background: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="lineChart" width="600" height="400"></canvas>
+
+<script>
+    const canvas = document.getElementById('lineChart');
+    const ctx = canvas.getContext('2d');
+
+    // mock 数据
+    const points = [50, 150, 100, 200, 80, 220, 120];
+    const maxVal = Math.max(...points) + 50;
+
+    // 动画参数
+    let progress = 0;
+    const speed = 0.01;
+
+    function drawChart(p) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // 画网格
+        ctx.strokeStyle = '#eee';
+        for (let i = 0; i <= 5; i++) {
+            let y = i * (canvas.height / 5);
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvas.width, y);
+            ctx.stroke();
+        }
+
+        // 画折线
+        ctx.strokeStyle = '#4facfe';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        for (let i = 0; i < points.length; i++) {
+            let x = (canvas.width / (points.length - 1)) * i;
+            let y = canvas.height - (points[i] / maxVal * canvas.height);
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                let prevX = (canvas.width / (points.length - 1)) * (i - 1);
+                let prevY = canvas.height - (points[i - 1] / maxVal * canvas.height);
+                let currX = prevX + (x - prevX) * p;
+                let currY = prevY + (y - prevY) * p;
+                ctx.lineTo(currX, currY);
+            }
+        }
+        ctx.stroke();
+    }
+
+    function animate() {
+        progress += speed;
+        if (progress > 1) progress = 1;
+        drawChart(progress);
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        }
+    }
+
+    animate();
+</script>
+
+</body>
+</html>

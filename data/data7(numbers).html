@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8"/>
+    <title>弹跳式数字自增</title>
+    <style>
+        body {
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
+        }
+
+        .counter {
+            font-size: 64px;
+            font-weight: bold;
+            color: #4facfe;
+            background: #fff;
+            padding: 20px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+    </style>
+</head>
+<body>
+
+<div class="counter" data-target="98765">0</div>
+
+<script>
+    function animateCounterBounce(el) {
+        const target = +el.getAttribute('data-target');
+        let current = 0;
+        const increment = target / 150;
+
+        function update() {
+            current += increment;
+            if (current < target) {
+                el.innerText = Math.floor(current);
+                el.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    el.style.transform = 'scale(1)';
+                }, 100);
+                requestAnimationFrame(update);
+            } else {
+                el.innerText = target;
+                el.style.transform = 'scale(1)';
+            }
+        }
+
+        update();
+    }
+
+    document.querySelectorAll('.counter').forEach(animateCounterBounce);
+</script>
+
+</body>
+</html>

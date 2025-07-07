@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>动态圆形进度条</title>
+    <style>
+        body {
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
+        }
+
+        .circle-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+
+        .circle-bg {
+            fill: none;
+            stroke: #eee;
+            stroke-width: 15;
+        }
+
+        .circle-progress {
+            fill: none;
+            stroke: url(#grad);
+            stroke-width: 15;
+            stroke-linecap: round;
+            stroke-dasharray: 565; /* 2πr -> 2π*90 */
+            stroke-dashoffset: 565;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 0.3s linear;
+        }
+
+        .circle-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="circle-container">
+    <svg width="200" height="200">
+        <defs>
+            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#00c3ff"/>
+                <stop offset="100%" stop-color="#ff00ff"/>
+            </linearGradient>
+        </defs>
+        <circle class="circle-bg" cx="100" cy="100" r="90"/>
+        <circle class="circle-progress" cx="100" cy="100" r="90"/>
+    </svg>
+    <div class="circle-text" id="circleText">0%</div>
+</div>
+
+<script>
+    const progressCircle = document.querySelector('.circle-progress');
+    const text = document.getElementById('circleText');
+    const totalLength = 565; // 2 * Math.PI * 90
+    let progress = 0;
+
+    function animateProgress() {
+        if (progress <= 100) {
+            const offset = totalLength * (1 - progress / 100);
+            progressCircle.style.strokeDashoffset = offset;
+            text.innerText = `${progress}%`;
+            progress++;
+            setTimeout(animateProgress, 50);
+        }
+    }
+
+    animateProgress();
+</script>
+
+</body>
+</html>

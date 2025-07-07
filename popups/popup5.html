@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Floating Modal</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: sans-serif;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            color: #fff;
+            background: linear-gradient(45deg, #00c3ff, #ff00ff);
+            border: none;
+            border-radius: 6px;
+            box-shadow: 0 0 10px #00c3ff, 0 0 20px #ff00ff;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            box-shadow: 0 0 20px #00c3ff, 0 0 30px #ff00ff;
+            transform: scale(1.05);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .modal {
+            position: relative;
+            width: 300px;
+            padding: 40px;
+            background: #fff;
+            border-radius: 12px;
+            color: #333;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(100px) scale(0.8);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            animation: float 6s ease-in-out infinite alternate;
+        }
+
+        .modal.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0);
+            }
+            50% {
+                transform: translateY(-10px) translateX(5px);
+            }
+            100% {
+                transform: translateY(0) translateX(-5px);
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<button id="openModal">🌬️ Open Floating Modal</button>
+
+<div class="overlay" id="overlay">
+    <div class="modal" id="modal">
+        <span class="close-btn" id="closeModal">&times;</span>
+        🚀 I'm a Floating Modal!
+    </div>
+</div>
+
+<script>
+    const openBtn = document.getElementById('openModal');
+    const closeBtn = document.getElementById('closeModal');
+    const overlay = document.getElementById('overlay');
+    const modal = document.getElementById('modal');
+
+    openBtn.addEventListener('click', () => {
+        overlay.style.display = 'flex';
+        setTimeout(() => modal.classList.add('show'), 50);
+    });
+
+    closeBtn.addEventListener('click', () => {
+        modal.classList.remove('show');
+        setTimeout(() => overlay.style.display = 'none', 800);
+    });
+</script>
+
+</body>
+</html>

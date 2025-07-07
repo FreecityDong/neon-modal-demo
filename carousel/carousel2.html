@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Shatter Carousel</title>
+    <style>
+        body {
+            margin: 0;
+            background: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #container {
+            position: relative;
+            width: 600px;
+            height: 400px;
+            overflow: hidden;
+        }
+
+        .piece {
+            position: absolute;
+            background-repeat: no-repeat;
+            background-size: 600px 400px;
+        }
+
+        button {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 16px;
+            font-size: 16px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+<div id="container"></div>
+<button onclick="shatter()">Shatter Next</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TweenMax.min.js"></script>
+<script>
+    const container = document.getElementById('container');
+    const images = [
+        'assets/a1.png',
+        'assets/a2.png',
+        'assets/a3.png',
+        'assets/a4.png',
+        'assets/a5.png'
+    ];
+    let currentIndex = 0;
+    const rows = 4;
+    const cols = 6;
+    let pieces = [];
+
+    function createPieces(image) {
+        pieces = [];  // 清空旧记录
+        const pieceWidth = container.clientWidth / cols;
+        const pieceHeight = container.clientHeight / rows;
+
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                const piece = document.createElement('div');
+                piece.classList.add('piece');
+                piece.style.width = pieceWidth + 'px';
+                piece.style.height = pieceHeight + 'px';
+                piece.style.left = c * pieceWidth + 'px';
+                piece.style.top = r * pieceHeight + 'px';
+                piece.style.backgroundImage = `url(${image})`;
+                piece.style.backgroundSize = `${container.clientWidth}px ${container.clientHeight}px`;
+                piece.style.backgroundPosition = `-${c * pieceWidth}px -${r * pieceHeight}px`;
+                container.appendChild(piece);
+                pieces.push(piece);
+            }
+        }
+    }
+
+    function shatter() {
+        pieces.forEach(piece => {
+            const dx = (Math.random() - 0.5) * 800;
+            const dy = (Math.random() - 0.5) * 800;
+            const rot = (Math.random() - 0.5) * 720;
+            TweenMax.to(piece, 1.2, {
+                x: dx,
+                y: dy,
+                rotation: rot,
+                opacity: 0,
+                ease: Power3.easeIn,
+                onComplete: () => piece.remove()
+            });
+        });
+
+        // 延迟创建下一张
+        currentIndex = (currentIndex + 1) % images.length;
+        setTimeout(() => {
+            createPieces(images[currentIndex]);
+        }, 1200);
+    }
+
+    // 初始化第一张
+    createPieces(images[currentIndex]);
+</script>
+</body>
+</html>

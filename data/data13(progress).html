@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8"/>
+    <title>DNA 螺旋进度条</title>
+    <style>
+        body {
+            margin: 0;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        canvas {
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+<canvas id="dnaCanvas" width="400" height="600"></canvas>
+
+<script>
+    const canvas = document.getElementById('dnaCanvas');
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const totalHeight = canvas.height - 100;
+
+    let progress = 0;  // 0 ~ 100%
+
+    function drawDNA(progress) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const spiralHeight = totalHeight * (progress / 100);
+        const turns = 6; // 螺旋圈数
+        const points = 100;
+
+        for (let i = 0; i < points; i++) {
+            const t = i / points;
+            const y = totalHeight * t;
+            const angle = t * turns * Math.PI * 2;
+            const x1 = centerX + 60 * Math.sin(angle);
+            const x2 = centerX - 60 * Math.sin(angle);
+
+            // 只画进度内的部分
+            if (y <= spiralHeight) {
+                // 连线
+                ctx.strokeStyle = `rgba(0, 195, 255, ${1 - t * 0.5})`;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(x1, canvas.height - y);
+                ctx.lineTo(x2, canvas.height - y);
+                ctx.stroke();
+
+                // 两侧圆点
+                ctx.fillStyle = '#00c3ff';
+                ctx.beginPath();
+                ctx.arc(x1, canvas.height - y, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#ff00ff';
+                ctx.beginPath();
+                ctx.arc(x2, canvas.height - y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // 进度文字
+        ctx.fillStyle = '#333';
+        ctx.font = 'bold 32px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${progress}%`, centerX, 50);
+    }
+
+    function animate() {
+        if (progress <= 100) {
+            drawDNA(progress);
+            progress++;
+            setTimeout(animate, 100);
+        }
+    }
+
+    animate();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jQuery Accordion Slider</title>
+    <style>
+        body {
+            margin: 0;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #accordion {
+            width: 800px;
+            height: 300px;
+            display: flex;
+            overflow: hidden;
+        }
+
+        #accordion img {
+            width: 160px; /* 800 / 5 */
+            height: 300px;
+            transition: width 0.5s;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div id="accordion">
+    <img src="assets/a1.png" alt="">
+    <img src="assets/a2.png" alt="">
+    <img src="assets/a3.png" alt="">
+    <img src="assets/a4.png" alt="">
+    <img src="assets/a5.png" alt="">
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    const $imgs = $('#accordion img');
+    let current = 0;
+    const maxW = 400; // 展开宽度
+    const minW = (800 - maxW) / ($imgs.length - 1);
+
+    function openAccordion(index) {
+        $imgs.each(function (i) {
+            $(this).stop().animate({
+                width: i === index ? maxW : minW
+            }, 500);
+        });
+    }
+
+    $imgs.on('click', function () {
+        current = $(this).index();
+        openAccordion(current);
+    });
+
+    // 自动播放
+    setInterval(() => {
+        current = (current + 1) % $imgs.length;
+        openAccordion(current);
+    }, 3000);
+
+    // 初始化
+    openAccordion(current);
+</script>
+</body>
+</html>

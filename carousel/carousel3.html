@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Centered Swiper Parallax Slider</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css"/>
+    <style>
+        body {
+            margin: 0;
+            background: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .swiper-container {
+            width: 90%;
+            max-width: 900px;
+            height: 500px;
+        }
+
+        .swiper-slide {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        .parallax-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 130%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .white-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 130%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .caption {
+            position: absolute;
+            bottom: 20px;
+            left: 30px;
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+<div class="swiper-container">
+    <div class="swiper-wrapper">
+        <div class="swiper-slide">
+            <div class="white-overlay" data-swiper-parallax="-30%"></div>
+            <img class="parallax-bg" data-swiper-parallax="-20%" src="assets/a1.png"/>
+            <div class="caption" data-swiper-parallax="-100">Image 1</div>
+        </div>
+        <div class="swiper-slide">
+            <div class="white-overlay" data-swiper-parallax="-30%"></div>
+            <img class="parallax-bg" data-swiper-parallax="-20%" src="assets/a2.png"/>
+            <div class="caption" data-swiper-parallax="-100">Image 2</div>
+        </div>
+        <div class="swiper-slide">
+            <div class="white-overlay" data-swiper-parallax="-30%"></div>
+            <img class="parallax-bg" data-swiper-parallax="-20%" src="assets/a3.png"/>
+            <div class="caption" data-swiper-parallax="-100">Image 3</div>
+        </div>
+        <div class="swiper-slide">
+            <div class="white-overlay" data-swiper-parallax="-30%"></div>
+            <img class="parallax-bg" data-swiper-parallax="-20%" src="assets/a4.png"/>
+            <div class="caption" data-swiper-parallax="-100">Image 4</div>
+        </div>
+    </div>
+
+    <div class="swiper-pagination"></div>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+</div>
+
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script>
+    var swiper = new Swiper('.swiper-container', {
+        speed: 1000,
+        parallax: true,
+        loop: true,
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+    });
+</script>
+
+</body>
+</html>

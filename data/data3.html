@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>交互表格示例</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            background: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        thead {
+            background: linear-gradient(90deg, #4facfe, #43e97b);
+            color: #fff;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+        }
+
+        tbody tr {
+            transition: background 0.3s;
+        }
+
+        tbody tr:hover {
+            background: rgba(79, 172, 254, 0.1);
+        }
+
+        th.sortable:hover {
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<table id="mockTable">
+    <thead>
+    <tr>
+        <th class="sortable" onclick="sortTable(0)">ID</th>
+        <th class="sortable" onclick="sortTable(1)">姓名</th>
+        <th class="sortable" onclick="sortTable(2)">分数</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- JS 动态生成 -->
+    </tbody>
+</table>
+
+<script>
+    // 生成随机数据
+    const names = ["小明", "小红", "小刚", "小丽", "小杰", "小芳"];
+    const tbody = document.querySelector('#mockTable tbody');
+
+    for (let i = 1; i <= 10; i++) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+      <td>${i}</td>
+      <td>${names[Math.floor(Math.random() * names.length)]}</td>
+      <td>${Math.floor(Math.random() * 100) + 1}</td>
+    `;
+        tbody.appendChild(tr);
+    }
+
+    // 简单排序函数
+    function sortTable(colIndex) {
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const sortedRows = rows.sort((a, b) => {
+            const aText = a.children[colIndex].textContent.trim();
+            const bText = b.children[colIndex].textContent.trim();
+            if (colIndex === 0 || colIndex === 2) {
+                return Number(aText) - Number(bText);
+            } else {
+                return aText.localeCompare(bText, 'zh-Hans-CN');
+            }
+        });
+        tbody.innerHTML = '';
+        sortedRows.forEach(row => tbody.appendChild(row));
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>高端饼图</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f0f2f5;
+        }
+
+        canvas {
+            background: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="pieChart" width="400" height="400"></canvas>
+
+<script>
+    const canvasPie = document.getElementById('pieChart');
+    const ctxPie = canvasPie.getContext('2d');
+    const data = [
+        {value: 40, color: '#ff7675'},
+        {value: 30, color: '#74b9ff'},
+        {value: 20, color: '#55efc4'},
+        {value: 10, color: '#ffeaa7'}
+    ];
+    const total = data.reduce((sum, d) => sum + d.value, 0);
+
+    let currentAngle = -Math.PI / 2;
+    let progressPie = 0;
+    const speedPie = 0.02;
+
+    function drawPie(progress) {
+        ctxPie.clearRect(0, 0, canvasPie.width, canvasPie.height);
+        let startAngle = -Math.PI / 2;
+
+        data.forEach(d => {
+            let sliceAngle = (d.value / total) * 2 * Math.PI * progress;
+            ctxPie.beginPath();
+            ctxPie.moveTo(200, 200);
+            ctxPie.fillStyle = d.color;
+            ctxPie.arc(200, 200, 180, startAngle, startAngle + sliceAngle);
+            ctxPie.fill();
+            startAngle += sliceAngle;
+        });
+    }
+
+    function animatePie() {
+        progressPie += speedPie;
+        if (progressPie > 1) progressPie = 1;
+        drawPie(progressPie);
+        if (progressPie < 1) {
+            requestAnimationFrame(animatePie);
+        }
+    }
+
+    animatePie();
+</script>
+
+</body>
+</html>

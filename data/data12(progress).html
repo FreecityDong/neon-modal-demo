@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8"/>
+    <title>圆形进度条 + 动态节点大字</title>
+    <style>
+        body {
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
+            color: #333;
+        }
+
+        .circle-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+
+        .circle-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+            font-weight: bold;
+            color: #00c3ff;
+        }
+
+        .node-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            top: 110%;
+            font-size: 24px;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .node-text.active {
+            opacity: 1;
+            transform: scale(1.2);
+            color: #ff00ff;
+        }
+
+        .circle-bg {
+            fill: none;
+            stroke: #eee;
+            stroke-width: 20;
+        }
+
+        .circle-progress {
+            fill: none;
+            stroke: url(#grad);
+            stroke-width: 20;
+            stroke-linecap: round;
+            stroke-dasharray: 565;
+            stroke-dashoffset: 565;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="circle-container">
+    <svg width="300" height="300">
+        <defs>
+            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#00c3ff"/>
+                <stop offset="100%" stop-color="#ff00ff"/>
+            </linearGradient>
+        </defs>
+        <circle class="circle-bg" cx="150" cy="150" r="90"/>
+        <circle class="circle-progress" cx="150" cy="150" r="90"/>
+    </svg>
+    <div class="circle-text" id="circleText">0%</div>
+    <div class="node-text" id="nodeText">准备中...</div>
+</div>
+
+<script>
+    const progressCircle = document.querySelector('.circle-progress');
+    const circleText = document.getElementById('circleText');
+    const nodeText = document.getElementById('nodeText');
+    const totalLength = 565;
+    let progress = 0;
+
+    const nodes = [
+        {threshold: 25, text: '数据加载完成'},
+        {threshold: 50, text: '分析进行中'},
+        {threshold: 75, text: '报告生成中'},
+        {threshold: 100, text: '任务完成！'}
+    ];
+
+    function animateProgress() {
+        if (progress <= 100) {
+            const offset = totalLength * (1 - progress / 100);
+            progressCircle.style.strokeDashoffset = offset;
+            circleText.innerText = `${progress}%`;
+
+            nodes.forEach(node => {
+                if (progress === node.threshold) {
+                    nodeText.innerText = node.text;
+                    nodeText.classList.add('active');
+                    setTimeout(() => {
+                        nodeText.classList.remove('active');
+                    }, 1000);
+                }
+            });
+
+            progress++;
+            setTimeout(animateProgress, 80);
+        }
+    }
+
+    animateProgress();
+</script>
+
+</body>
+</html>

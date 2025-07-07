@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Three.js Shatter Switch</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js"></script>
+<script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+    camera.position.z = 800;
+
+    const renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    let group;
+    let currentIndex = 0;
+    const images = ['assets/a1.png', 'assets/a2.png'];
+    const pieces = [];
+    const rows = 4, cols = 6;
+    const width = 400, height = 300;
+    const pieceW = width / cols;
+    const pieceH = height / rows;
+
+    function createGroup(texture) {
+        const g = new THREE.Group();
+
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                const geo = new THREE.PlaneGeometry(pieceW, pieceH);
+                const mat = new THREE.MeshBasicMaterial({
+                    map: texture.clone(),
+                    side: THREE.DoubleSide
+                });
+
+                mat.map.repeat.set(1 / cols, 1 / rows);
+                mat.map.offset.set(c / cols, 1 - (r + 1) / rows);
+                mat.map.needsUpdate = true;
+
+                const mesh = new THREE.Mesh(geo, mat);
+                mesh.position.x = (c - cols / 2) * pieceW + pieceW / 2;
+                mesh.position.y = (rows / 2 - r) * pieceH - pieceH / 2;
+
+                g.add(mesh);
+                pieces.push(mesh);
+            }
+        }
+
+        return g;
+    }
+
+    function loadImageAndCreate(index) {
+        pieces.length = 0;
+        new THREE.TextureLoader().load(images[index], tex => {
+            if (group) scene.remove(group);
+            group = createGroup(tex);
+            scene.add(group);
+        });
+    }
+
+    function shatter() {
+        pieces.forEach(piece => {
+            piece.userData.vx = (Math.random() - 0.5) * 20;
+            piece.userData.vy = (Math.random() - 0.5) * 20;
+            piece.userData.vz = (Math.random() - 0.5) * 20;
+            piece.userData.rx = (Math.random() - 0.5) * 0.2;
+            piece.userData.ry = (Math.random() - 0.5) * 0.2;
+        });
+
+        let count = 0;
+        const interval = setInterval(() => {
+            pieces.forEach(piece => {
+                piece.position.x += piece.userData.vx;
+                piece.position.y += piece.userData.vy;
+                piece.position.z += piece.userData.vz;
+                piece.rotation.x += piece.userData.rx;
+                piece.rotation.y += piece.userData.ry;
+            });
+            renderer.render(scene, camera);
+
+            count++;
+            if (count > 50) {
+                clearInterval(interval);
+                currentIndex = (currentIndex + 1) % images.length;
+                loadImageAndCreate(currentIndex);
+            }
+        }, 30);
+    }
+
+    loadImageAndCreate(currentIndex);
+
+    function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+    }
+
+    animate();
+
+    window.addEventListener('click', shatter);
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+</script>
+</body>
+</html>
